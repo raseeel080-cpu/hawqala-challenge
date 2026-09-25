@@ -28,100 +28,22 @@
             box-sizing: border-box;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
         }
-        h1 {
-            text-align: center;
-            color: var(--primary);
-            font-size: 22px;
-            margin-bottom: 5px;
-        }
-        p.subtitle {
-            text-align: center;
-            color: #52b788;
-            font-size: 14px;
-            margin-top: 0;
-            margin-bottom: 25px;
-        }
-        .counter-card {
-            background: #d8f3dc;
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 25px;
-        }
-        .counter-card h3 {
-            margin: 0 0 10px 0;
-            color: var(--primary);
-        }
-        .count-display {
-            font-size: 40px;
-            font-weight: bold;
-            color: var(--primary);
-            margin: 15px 0;
-        }
-        .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-        .btn:active {
-            background: #1b4332;
-        }
-        .btn-share {
-            background: #40916c;
-            margin-top: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        th, td {
-            border: 1px solid #d8f3dc;
-            padding: 12px;
-            text-align: center;
-        }
-        th {
-            background: var(--primary);
-            color: white;
-            font-weight: normal;
-        }
-        /* تلوين عمود سارا باللون الأصفر الهادئ */
-        .sara-column {
-            background-color: #fff9c4 !important; 
-        }
-        th.sara-column {
-            background-color: #fbc02d !important;
-            color: #333;
-            font-weight: bold;
-        }
-        tr:nth-child(even) {
-            background-color: #f9fbf9;
-        }
-        .checkbox-custom {
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
-        .notification-setup {
-            text-align: center;
-            font-size: 12px;
-            color: #777;
-            margin-top: 20px;
-        }
-        .notification-setup button {
-            background: none;
-            border: 1px underline;
-            color: var(--primary);
-            cursor: pointer;
-            padding: 5px;
-        }
+        h1 { text-align: center; color: var(--primary); font-size: 22px; margin-bottom: 5px; }
+        p.subtitle { text-align: center; color: #52b788; font-size: 14px; margin-top: 0; margin-bottom: 25px; }
+        .counter-card { background: #d8f3dc; border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 25px; }
+        .counter-card h3 { margin: 0 0 10px 0; color: var(--primary); }
+        .count-display { font-size: 40px; font-weight: bold; color: var(--primary); margin: 15px 0; }
+        .btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 16px; cursor: pointer; width: 100%; margin-bottom: 10px; }
+        .btn:active { background: #1b4332; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #d8f3dc; padding: 12px; text-align: center; }
+        th { background: var(--primary); color: white; font-weight: normal; }
+        .sara-column { background-color: #fff9c4 !important; }
+        th.sara-column { background-color: #fbc02d !important; color: #333; font-weight: bold; }
+        tr:nth-child(even) { background-color: #f9fbf9; }
+        .checkbox-custom { width: 24px; height: 24px; cursor: pointer; accent-color: var(--primary); }
+        #syncStatus { text-align: center; font-size: 12px; color: #777; margin-top: 10px; }
+        .loading { color: #fbc02d; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -130,15 +52,17 @@
     <h1>تحدي 40 يوم حوقلة</h1>
     <p class="subtitle">لا حول ولا قوة إلا بالله</p>
 
-    <!-- عداد اليوم -->
+    <!-- عداد اليوم (مستقل لكل جهاز) -->
     <div class="counter-card">
-        <h3>ورد اليوم (أصيلة)</h3>
+        <h3>ورد اليوم الخاص بك</h3>
         <div class="count-display" id="dailyCounter">0 / 100</div>
         <button class="btn" onclick="incrementCounter()">+ حوقلة</button>
         <button class="btn" style="background: #95d5b2; color: #1b4332;" onclick="resetCounter()">تصفير العداد</button>
     </div>
 
-    <!-- جدول المتابعة -->
+    <div id="syncStatus" class="loading">⏳ جاري جلب البيانات من السحابة...</div>
+
+    <!-- جدول المتابعة (مشترك) -->
     <table>
         <thead>
             <tr>
@@ -151,59 +75,101 @@
             <!-- يتم توليد الصفوف عبر الجافاسكربت -->
         </tbody>
     </table>
-
-    <!-- زر المشاركة -->
-    <button class="btn btn-share" onclick="shareViaEmail()">إرسال التحديث لسارا عبر البريد ✉️</button>
-
-    <div class="notification-setup">
-        <button onclick="requestNotificationPermission()">تفعيل التنبيه اليومي في المتصفح</button>
-    </div>
 </div>
 
 <script>
+    // --- ضعي بياناتك هنا ---
+    const BIN_ID = '6ab6fe3fffd5d160532f9941'; 
+    const API_KEY = '$2a$10$ST5PELq9YioFXRjdaME.mOGDdu3P/gix7SIf5UhEG2/8nLWbGTgfa';
+    // -----------------------
+
+    const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
     const totalDays = 40;
     
+    // العداد اليومي (حفظ محلي فقط)
     let currentCount = parseInt(localStorage.getItem('hawqala_count')) || 0;
-    let daysData = JSON.parse(localStorage.getItem('hawqala_data')) || Array.from({length: totalDays}, () => ({aseela: false, sara: false}));
+    let daysData = [];
 
     const countDisplay = document.getElementById('dailyCounter');
     const tableBody = document.getElementById('tableBody');
+    const syncStatus = document.getElementById('syncStatus');
 
-    function updateCounterUI() {
-        countDisplay.innerText = `${currentCount} / 100`;
-    }
-
+    // إعداد العداد
+    function updateCounterUI() { countDisplay.innerText = `${currentCount} / 100`; }
     function incrementCounter() {
         if (currentCount < 100) {
             currentCount++;
             localStorage.setItem('hawqala_count', currentCount);
             updateCounterUI();
-            
             if (currentCount === 100) {
-                alert("ما شاء الله! اكتمل ورد اليوم (100 حوقلة). يمكنك الآن وضع علامة (صح) في جدول اليوم.");
+                alert("ما شاء الله! اكتمل ورد اليوم (100 حوقلة). ضعي علامة (صح) في جدول اليوم.");
                 currentCount = 0; 
                 localStorage.setItem('hawqala_count', currentCount);
                 updateCounterUI();
             }
         }
     }
-
     function resetCounter() {
         currentCount = 0;
         localStorage.setItem('hawqala_count', currentCount);
         updateCounterUI();
     }
 
-    function saveTableData(dayIndex, person, isChecked) {
-        daysData[dayIndex][person] = isChecked;
-        localStorage.setItem('hawqala_data', JSON.stringify(daysData));
+    // جلب البيانات المشتركة من السحابة
+    async function fetchCloudData() {
+        try {
+            const response = await fetch(JSONBIN_URL, {
+                headers: { 'X-Master-Key': API_KEY }
+            });
+            const result = await response.json();
+            
+            if (result.record && result.record.days && result.record.days.length === totalDays) {
+                daysData = result.record.days;
+            } else {
+                // تهيئة الجدول لأول مرة في السحابة
+                daysData = Array.from({length: totalDays}, () => ({aseela: false, sara: false}));
+                await updateCloudData();
+            }
+            renderTable();
+            syncStatus.innerText = "✅ متصل (البيانات محدثة)";
+            syncStatus.style.color = "#2d6a4f";
+        } catch (error) {
+            console.error('Error:', error);
+            syncStatus.innerText = "❌ فشل الاتصال بالسحابة. تأكدي من المفاتيح.";
+            syncStatus.style.color = "red";
+        }
     }
 
+    // تحديث البيانات في السحابة
+    async function updateCloudData() {
+        syncStatus.innerText = "⏳ جاري حفظ التغييرات...";
+        try {
+            await fetch(JSONBIN_URL, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Master-Key': API_KEY
+                },
+                body: JSON.stringify({ days: daysData })
+            });
+            syncStatus.innerText = "✅ تم الحفظ بنجاح";
+        } catch (error) {
+            console.error('Error:', error);
+            syncStatus.innerText = "❌ خطأ في الحفظ";
+        }
+    }
+
+    // حفظ عند النقر على (صح)
+    function saveTableData(dayIndex, person, isChecked) {
+        daysData[dayIndex][person] = isChecked;
+        updateCloudData(); // الإرسال للسحابة
+    }
+
+    // بناء الجدول
     function renderTable() {
         tableBody.innerHTML = '';
         for (let i = 0; i < totalDays; i++) {
             const tr = document.createElement('tr');
-            
             const tdDay = document.createElement('td');
             tdDay.innerText = i + 1;
             
@@ -216,7 +182,7 @@
             tdAseela.appendChild(checkAseela);
 
             const tdSara = document.createElement('td');
-            tdSara.className = 'sara-column'; // تفعيل اللون الأصفر هنا
+            tdSara.className = 'sara-column';
             const checkSara = document.createElement('input');
             checkSara.type = 'checkbox';
             checkSara.className = 'checkbox-custom';
@@ -227,52 +193,13 @@
             tr.appendChild(tdDay);
             tr.appendChild(tdAseela);
             tr.appendChild(tdSara);
-            
             tableBody.appendChild(tr);
         }
     }
 
-    function shareViaEmail() {
-        const aseelaCompleted = daysData.filter(d => d.aseela).length;
-        const saraCompleted = daysData.filter(d => d.sara).length;
-        
-        const subject = encodeURIComponent("تحديث تحدي الحوقلة (40 يوم)");
-        const body = encodeURIComponent(
-            `أهلاً سارا،\n\n` +
-            `هذا تحديثنا لتحدي الحوقلة:\n` +
-            `- الأيام المنجزة (أصيلة): ${aseelaCompleted} يوم.\n` +
-            `- الأيام المنجزة (سارا): ${saraCompleted} يوم.\n\n` +
-            `بالتوفيق لنا! لا حول ولا قوة إلا بالله.`
-        );
-        
-        window.location.href = `mailto:?subject=${subject}&body=${body}`;
-    }
-
-    function requestNotificationPermission() {
-        if (!("Notification" in window)) {
-            alert("متصفحك لا يدعم التنبيهات.");
-        } else if (Notification.permission === "granted") {
-            scheduleDailyNotification();
-            alert("التنبيهات مفعلة بالفعل!");
-        } else if (Notification.permission !== "denied") {
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    scheduleDailyNotification();
-                    alert("تم تفعيل التنبيهات بنجاح.");
-                }
-            });
-        }
-    }
-
-    function scheduleDailyNotification() {
-        new Notification("تحدي الحوقلة", {
-            body: "تذكير: لا تنسي ورد الحوقلة اليوم (لا حول ولا قوة إلا بالله).",
-            icon: "https://cdn-icons-png.flaticon.com/512/3389/3389081.png"
-        });
-    }
-
+    // بدء التشغيل
     updateCounterUI();
-    renderTable();
+    fetchCloudData();
 
 </script>
 </body>
