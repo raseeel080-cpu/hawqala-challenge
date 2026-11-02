@@ -3,204 +3,313 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>داش بورد الحوقلة</title>
+    <title>داش بورد الإنجاز والارتقاء</title>
     <style>
         :root {
-            --primary: #2d6a4f;
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --text: #1b4332;
+            --bg-gradient: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --primary: #FF6B6B;
+            --secondary: #4ECDC4;
+            --accent: #FCA311;
+            --text-dark: #2b2d42;
+            --sara-col: #fff3e0;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+            background: var(--bg-gradient);
+            background-attachment: fixed;
             margin: 0;
-            padding: 0;
+            padding: 20px 10px;
             display: flex;
             justify-content: center;
+            color: var(--text-dark);
         }
         .dashboard {
             width: 100%;
-            max-width: 450px;
-            background: var(--card-bg);
-            min-height: 100vh;
-            padding: 20px;
-            box-sizing: border-box;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
-        h1 { text-align: center; color: var(--primary); font-size: 22px; margin-bottom: 5px; }
-        p.subtitle { text-align: center; color: #52b788; font-size: 14px; margin-top: 0; margin-bottom: 25px; }
-        .counter-card { background: #d8f3dc; border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 25px; }
-        .counter-card h3 { margin: 0 0 10px 0; color: var(--primary); }
-        .count-display { font-size: 40px; font-weight: bold; color: var(--primary); margin: 15px 0; }
-        .btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 16px; cursor: pointer; width: 100%; margin-bottom: 10px; }
-        .btn:active { background: #1b4332; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #d8f3dc; padding: 12px; text-align: center; }
-        th { background: var(--primary); color: white; font-weight: normal; }
-        .sara-column { background-color: #fff9c4 !important; }
-        th.sara-column { background-color: #fbc02d !important; color: #333; font-weight: bold; }
-        tr:nth-child(even) { background-color: #f9fbf9; }
-        .checkbox-custom { width: 24px; height: 24px; cursor: pointer; accent-color: var(--primary); }
-        #syncStatus { text-align: center; font-size: 12px; color: #777; margin-top: 10px; }
-        .loading { color: #fbc02d; font-weight: bold; }
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 2px solid #fff;
+        }
+        h1 {
+            text-align: center;
+            color: #fff;
+            text-shadow: 1px 2px 4px rgba(0,0,0,0.2);
+            font-size: 26px;
+            margin-top: 0;
+        }
+        h2 {
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .title-taj { color: var(--primary); }
+        .title-week { color: var(--secondary); }
+        .title-archive { color: #8d99ae; }
+        
+        #syncStatus {
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            background: rgba(255,255,255,0.8);
+            padding: 8px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th, td { border: 1px solid #eee; padding: 10px 5px; text-align: center; }
+        th { color: white; font-weight: 600; }
+        
+        /* ألوان الجداول */
+        .table-taj th { background: var(--primary); }
+        .table-week th { background: var(--secondary); font-size: 12px;}
+        .table-archive th { background: #8d99ae; }
+        
+        .sara-column { background-color: var(--sara-col) !important; }
+        th.sara-column { color: #333 !important; }
+        tr:nth-child(even) { background-color: #fafafa; }
+        
+        /* تنسيق الصناديق */
+        .checkbox-custom {
+            width: 22px; height: 22px; cursor: pointer;
+            accent-color: var(--primary);
+        }
+        .table-week .checkbox-custom { accent-color: var(--secondary); width: 18px; height: 18px; }
+        
+        /* خلايا الجدول الأسبوعي */
+        .task-cell {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 4px;
+        }
+        
+        details {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+        }
+        summary {
+            font-weight: bold;
+            cursor: pointer;
+            color: #495057;
+            outline: none;
+        }
     </style>
 </head>
 <body>
 
 <div class="dashboard">
-    <h1>تحدي 40 يوم حوقلة</h1>
-    <p class="subtitle">لا حول ولا قوة إلا بالله</p>
+    <h1>✨ رحلة الإنجاز والارتقاء ✨</h1>
+    
+    <div id="syncStatus">⏳ جاري مزامنة البيانات...</div>
 
-    <!-- عداد اليوم (مستقل لكل جهاز) -->
-    <div class="counter-card">
-        <h3>ورد اليوم الخاص بك</h3>
-        <div class="count-display" id="dailyCounter">0 / 100</div>
-        <button class="btn" onclick="incrementCounter()">+ حوقلة</button>
-        <button class="btn" style="background: #95d5b2; color: #1b4332;" onclick="resetCounter()">تصفير العداد</button>
+    <!-- تحدي تاج الذكر -->
+    <div class="card">
+        <h2 class="title-taj">👑 تاج الذكر (40 يوم)</h2>
+        <p style="font-size:12px; color:#666; text-align:center; margin-top:-10px;">لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير</p>
+        <table class="table-taj">
+            <thead>
+                <tr>
+                    <th>اليوم</th>
+                    <th>أصيلة</th>
+                    <th class="sara-column" style="background:#ffd54f;">سارا</th>
+                </tr>
+            </thead>
+            <tbody id="tajBody"></tbody>
+        </table>
     </div>
 
-    <div id="syncStatus" class="loading">⏳ جاري جلب البيانات من السحابة...</div>
+    <!-- خطة نهاية العام الأسبوعية -->
+    <div class="card">
+        <h2 class="title-week">🚀 خطة ختام العام (9 أسابيع)</h2>
+        <table class="table-week">
+            <thead>
+                <tr>
+                    <th style="width: 20%;">الأسبوع</th>
+                    <th title="3 أيام">شخصي<br>(3)</th>
+                    <th title="يومين">شعوري<br>(2)</th>
+                    <th title="يومين">مادي<br>(2)</th>
+                    <th title="3 أيام">التقدم<br>(3)</th>
+                </tr>
+            </thead>
+            <tbody id="weekBody"></tbody>
+        </table>
+    </div>
 
-    <!-- جدول المتابعة (مشترك) -->
-    <table>
-        <thead>
-            <tr>
-                <th>اليوم</th>
-                <th>أصيلة</th>
-                <th class="sara-column">سارا</th>
-            </tr>
-        </thead>
-        <tbody id="tableBody">
-            <!-- يتم توليد الصفوف عبر الجافاسكربت -->
-        </tbody>
-    </table>
+    <!-- الأرشيف (مخفي يمكن فتحه) -->
+    <div class="card" style="padding: 10px;">
+        <details>
+            <summary>🗂️ أرشيف تحدي الحوقلة (مكتمل ✅)</summary>
+            <table class="table-archive" style="margin-top: 15px;">
+                <thead>
+                    <tr>
+                        <th>اليوم</th>
+                        <th>أصيلة</th>
+                        <th class="sara-column" style="background:#e0e0e0;">سارا</th>
+                    </tr>
+                </thead>
+                <tbody id="archiveBody"></tbody>
+            </table>
+        </details>
+    </div>
 </div>
 
 <script>
-    // --- ضعي بياناتك هنا ---
-    const BIN_ID = '6ab6fe3fffd5d160532f9941'; 
-    const API_KEY = '$2a$10$ST5PELq9YioFXRjdaME.mOGDdu3P/gix7SIf5UhEG2/8nLWbGTgfa';
-    // -----------------------
+    // --- ضعي مفاتيحك هنا نفس التي استخدمتيها سابقاً ---
+    const BIN_ID = 'ضعي_BIN_ID_هنا'; 
+    const API_KEY = 'ضعي_MASTER_KEY_هنا';
+    // ------------------------------------------------
 
     const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-    const totalDays = 40;
     
-    // العداد اليومي (حفظ محلي فقط)
-    let currentCount = parseInt(localStorage.getItem('hawqala_count')) || 0;
-    let daysData = [];
+    let appData = {
+        hawqala: [],
+        tajDhikr: [],
+        weekly: []
+    };
 
-    const countDisplay = document.getElementById('dailyCounter');
-    const tableBody = document.getElementById('tableBody');
     const syncStatus = document.getElementById('syncStatus');
 
-    // إعداد العداد
-    function updateCounterUI() { countDisplay.innerText = `${currentCount} / 100`; }
-    function incrementCounter() {
-        if (currentCount < 100) {
-            currentCount++;
-            localStorage.setItem('hawqala_count', currentCount);
-            updateCounterUI();
-            if (currentCount === 100) {
-                alert("ما شاء الله! اكتمل ورد اليوم (100 حوقلة). ضعي علامة (صح) في جدول اليوم.");
-                currentCount = 0; 
-                localStorage.setItem('hawqala_count', currentCount);
-                updateCounterUI();
-            }
-        }
-    }
-    function resetCounter() {
-        currentCount = 0;
-        localStorage.setItem('hawqala_count', currentCount);
-        updateCounterUI();
-    }
-
-    // جلب البيانات المشتركة من السحابة
+    // جلب البيانات من السحابة
     async function fetchCloudData() {
         try {
-            const response = await fetch(JSONBIN_URL, {
-                headers: { 'X-Master-Key': API_KEY }
-            });
+            const response = await fetch(JSONBIN_URL, { headers: { 'X-Master-Key': API_KEY } });
             const result = await response.json();
+            let data = result.record;
             
-            if (result.record && result.record.days && result.record.days.length === totalDays) {
-                daysData = result.record.days;
-            } else {
-                // تهيئة الجدول لأول مرة في السحابة
-                daysData = Array.from({length: totalDays}, () => ({aseela: false, sara: false}));
-                await updateCloudData();
+            // نظام التحديث الذكي: إذا كانت البيانات القديمة موجودة (days) ولم يتم تحويلها بعد
+            if (data.days) {
+                appData.hawqala = data.days;
+                
+                // إنشاء جداول فارغة للتحديات الجديدة
+                appData.tajDhikr = Array.from({length: 40}, () => ({aseela: false, sara: false}));
+                appData.weekly = Array.from({length: 9}, () => ({
+                    personal: [false, false, false],
+                    emotional: [false, false],
+                    material: [false, false],
+                    progress: [false, false, false]
+                }));
+                
+                // رفع الهيكلة الجديدة للسحابة فوراً
+                await updateCloudData(); 
+            } else if (data.tajDhikr) {
+                // الهيكلة الجديدة موجودة مسبقاً
+                appData = data;
             }
-            renderTable();
+
+            renderAllTables();
             syncStatus.innerText = "✅ متصل (البيانات محدثة)";
             syncStatus.style.color = "#2d6a4f";
         } catch (error) {
             console.error('Error:', error);
-            syncStatus.innerText = "❌ فشل الاتصال بالسحابة. تأكدي من المفاتيح.";
+            syncStatus.innerText = "❌ فشل الاتصال. تأكدي من المفاتيح.";
             syncStatus.style.color = "red";
         }
     }
 
-    // تحديث البيانات في السحابة
+    // إرسال التحديثات للسحابة
     async function updateCloudData() {
         syncStatus.innerText = "⏳ جاري حفظ التغييرات...";
         try {
             await fetch(JSONBIN_URL, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Master-Key': API_KEY
-                },
-                body: JSON.stringify({ days: daysData })
+                headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+                body: JSON.stringify(appData)
             });
             syncStatus.innerText = "✅ تم الحفظ بنجاح";
         } catch (error) {
-            console.error('Error:', error);
             syncStatus.innerText = "❌ خطأ في الحفظ";
         }
     }
 
-    // حفظ عند النقر على (صح)
-    function saveTableData(dayIndex, person, isChecked) {
-        daysData[dayIndex][person] = isChecked;
-        updateCloudData(); // الإرسال للسحابة
+    // حفظ عند النقر وإرسال
+    function saveData(type, index, field, value, subIndex = null) {
+        if (subIndex !== null) {
+            appData[type][index][field][subIndex] = value;
+        } else {
+            appData[type][index][field] = value;
+        }
+        updateCloudData();
     }
 
-    // بناء الجدول
-    function renderTable() {
-        tableBody.innerHTML = '';
-        for (let i = 0; i < totalDays; i++) {
+    // بناء واجهة تاج الذكر
+    function renderTajDhikr() {
+        const tbody = document.getElementById('tajBody');
+        tbody.innerHTML = '';
+        appData.tajDhikr.forEach((day, i) => {
             const tr = document.createElement('tr');
-            const tdDay = document.createElement('td');
-            tdDay.innerText = i + 1;
+            tr.innerHTML = `
+                <td>${i + 1}</td>
+                <td><input type="checkbox" class="checkbox-custom" ${day.aseela ? 'checked' : ''} onchange="saveData('tajDhikr', ${i}, 'aseela', this.checked)"></td>
+                <td class="sara-column"><input type="checkbox" class="checkbox-custom" ${day.sara ? 'checked' : ''} onchange="saveData('tajDhikr', ${i}, 'sara', this.checked)"></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // بناء واجهة الجدول الأسبوعي
+    function renderWeekly() {
+        const tbody = document.getElementById('weekBody');
+        tbody.innerHTML = '';
+        appData.weekly.forEach((week, i) => {
+            const tr = document.createElement('tr');
             
-            const tdAseela = document.createElement('td');
-            const checkAseela = document.createElement('input');
-            checkAseela.type = 'checkbox';
-            checkAseela.className = 'checkbox-custom';
-            checkAseela.checked = daysData[i].aseela;
-            checkAseela.onchange = (e) => saveTableData(i, 'aseela', e.target.checked);
-            tdAseela.appendChild(checkAseela);
+            // دالة مساعدة لإنشاء صناديق الاختيار المتعددة في الخلية
+            const createChecks = (field, arr) => {
+                return arr.map((val, subIdx) => 
+                    `<input type="checkbox" class="checkbox-custom" ${val ? 'checked' : ''} onchange="saveData('weekly', ${i}, '${field}', this.checked, ${subIdx})">`
+                ).join('');
+            };
 
-            const tdSara = document.createElement('td');
-            tdSara.className = 'sara-column';
-            const checkSara = document.createElement('input');
-            checkSara.type = 'checkbox';
-            checkSara.className = 'checkbox-custom';
-            checkSara.checked = daysData[i].sara;
-            checkSara.onchange = (e) => saveTableData(i, 'sara', e.target.checked);
-            tdSara.appendChild(checkSara);
+            tr.innerHTML = `
+                <td style="font-weight:bold; color:var(--secondary)">أسبوع ${i + 1}</td>
+                <td><div class="task-cell">${createChecks('personal', week.personal)}</div></td>
+                <td><div class="task-cell">${createChecks('emotional', week.emotional)}</div></td>
+                <td><div class="task-cell">${createChecks('material', week.material)}</div></td>
+                <td><div class="task-cell">${createChecks('progress', week.progress)}</div></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
 
-            tr.appendChild(tdDay);
-            tr.appendChild(tdAseela);
-            tr.appendChild(tdSara);
-            tableBody.appendChild(tr);
-        }
+    // بناء واجهة الأرشيف (الحوقلة)
+    function renderArchive() {
+        const tbody = document.getElementById('archiveBody');
+        tbody.innerHTML = '';
+        if(!appData.hawqala || appData.hawqala.length === 0) return;
+        
+        appData.hawqala.forEach((day, i) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${i + 1}</td>
+                <td>${day.aseela ? '✅' : '➖'}</td>
+                <td class="sara-column">${day.sara ? '✅' : '➖'}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function renderAllTables() {
+        renderTajDhikr();
+        renderWeekly();
+        renderArchive();
     }
 
     // بدء التشغيل
-    updateCounterUI();
     fetchCloudData();
-
 </script>
 </body>
 </html>
