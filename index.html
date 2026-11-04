@@ -80,7 +80,7 @@
         tr:nth-child(even) { background-color: #fafafa; }
         
         /* -------------------------------------
-           تنسيق المربعات الجديدة (الفيونكة والقلب)
+           تنسيق المربعات والأيقونات
            ------------------------------------- */
         .custom-check {
             display: inline-block;
@@ -101,7 +101,7 @@
         }
         /* تنسيق الأيقونة عند التحديد (صح) */
         .custom-check input[type="checkbox"]:checked + .icon {
-            filter: grayscale(0%) opacity(1); /* لون كامل */
+            filter: grayscale(0%) opacity(1); /* لون كامل وزاهي */
             transform: scale(1.25); /* تكبير حجمها قليلاً */
         }
         
@@ -131,8 +131,8 @@
             <thead>
                 <tr>
                     <th>اليوم</th>
-                    <th>صولا</th>
-                    <th class="sara-column" style="background:#ffd54f;">سارتي</th>
+                    <th>أصيلة</th>
+                    <th class="sara-column" style="background:#ffd54f;">سارا</th>
                 </tr>
             </thead>
             <tbody id="tajBody"></tbody>
@@ -176,14 +176,17 @@
 
 <script>
     // --- ضعي مفاتيحك هنا ---
-    const BIN_ID = '6ab6fe3fffd5d160532f9941'; 
-    const API_KEY = '$2a$10$ST5PELq9YioFXRjdaME.mOGDdu3P/gix7SIf5UhEG2/8nLWbGTgfa';
+    const BIN_ID = 'ضعي_BIN_ID_هنا'; 
+    const API_KEY = 'ضعي_MASTER_KEY_هنا';
     // ----------------------
 
     const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
     
     let appData = { hawqala: [], tajDhikr: [], weekly: [] };
     const syncStatus = document.getElementById('syncStatus');
+
+    // مصفوفة "الملصقات" أو الأحجار الكريمة لقسم الـ 9 أسابيع
+    const stickerGems = ['💎', '🌸', '🌟', '💖', '🔮', '🌺'];
 
     async function fetchCloudData() {
         try {
@@ -237,13 +240,13 @@
         updateCloudData();
     }
 
+    // جدول تاج الذكر (بقي بالفيونكة والقلب كما هو)
     function renderTajDhikr() {
         const tbody = document.getElementById('tajBody');
         tbody.innerHTML = '';
         appData.tajDhikr.forEach((day, i) => {
             const tr = document.createElement('tr');
             
-            // تحديد الأيقونة بالتناوب (يوم فيونكة ويوم قلب)
             const icon = (i % 2 === 0) ? '🎀' : '💖';
             
             tr.innerHTML = `
@@ -265,6 +268,7 @@
         });
     }
 
+    // جدول الـ 9 أسابيع (تم التحديث لملصقات الأحجار الكريمة)
     function renderWeekly() {
         const tbody = document.getElementById('weekBody');
         tbody.innerHTML = '';
@@ -273,8 +277,10 @@
             
             const createChecks = (field, arr) => {
                 return arr.map((val, subIdx) => {
-                    // تناوب الفيونكة والقلب في الجدول الأسبوعي أيضاً
-                    const icon = (subIdx % 2 === 0) ? '🎀' : '💖';
+                    // توزيع أشكال الملصقات بناءً على رقم الأسبوع والخانة ليعطي تنوعاً ملوناً
+                    const iconIndex = (i * 5 + subIdx + field.length) % stickerGems.length;
+                    const icon = stickerGems[iconIndex];
+                    
                     return `
                     <label class="custom-check">
                         <input type="checkbox" ${val ? 'checked' : ''} onchange="saveData('weekly', ${i}, '${field}', this.checked, ${subIdx})">
